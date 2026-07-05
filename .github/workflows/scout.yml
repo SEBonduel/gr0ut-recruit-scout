@@ -1,0 +1,37 @@
+name: Scout de recrutement
+
+on:
+  schedule:
+    - cron: "0 7 * * *"   # tous les jours 07h UTC (09h Paris) : détecte les départs de la veille
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: recruit-scout
+  cancel-in-progress: false
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run scout
+        env:
+          WG_APP_ID: ${{ secrets.WG_APP_ID }}
+          RECRUIT_WEBHOOK_URL: ${{ secrets.RECRUIT_WEBHOOK_URL }}
+        run: python main.py
+      - name: Persist roster snapshot
+        run: |
+          if [[ -n "$(git status --porcelain rosters.json)" ]]; then
+            git config user.name  "recruit-scout"
+            git config user.email "bot@users.noreply.github.com"
+            git add rosters.json
+            git commit -m "chore: daily roster snapshot [skip ci]"
+            git push
+          fi
