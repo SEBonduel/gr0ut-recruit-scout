@@ -22,6 +22,8 @@ APP_ID = os.environ.get("WG_APP_ID", "").strip()
 WEBHOOK_URL = os.environ.get("RECRUIT_WEBHOOK_URL", "").strip()
 API_BASE = os.environ.get("WG_API_BASE", "https://api.worldoftanks.eu")
 PORTAL = os.environ.get("WG_PORTAL", "https://worldoftanks.eu")
+# Région tomato.gg pour le lien de profil (EU / NA / ASIA).
+TOMATO_REGION = os.environ.get("TOMATO_REGION", "EU")
 
 WATCHLIST_FILE = os.environ.get("WATCHLIST_FILE", "watchlist.json")
 ROSTER_FILE = os.environ.get("ROSTER_FILE", "rosters.json")
@@ -183,7 +185,7 @@ def evaluate(account_id, exp):
 def post_candidate(cand, info, former_tag):
     name = info.get("nickname") or str(cand["account_id"])
     star = "⭐ " if cand["has_priority"] else ""
-    profile = f"{PORTAL}/en/community/accounts/{cand['account_id']}-{name}/"
+    profile = f"https://tomato.gg/stats/{name}-{cand['account_id']}/{TOMATO_REGION}"
     tanks = ", ".join(("**IS-7**" if t == "IS-7" else t) for t in cand["tanks"])
     lbt = info.get("last_battle_time")
     seen = f"<t:{lbt}:R>" if lbt else "—"
