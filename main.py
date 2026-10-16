@@ -39,6 +39,8 @@ REQUIRED_TANKS = {
     58641: "VK 72.01 (K)", 9489: "E 100",
 }
 WN8_EXP_URL = "https://static.modxvm.com/wn8-data-exp/json/wn8exp.json"
+# Copie locale (même format), utilisée si XVM est indisponible.
+WN8_EXP_FILE = os.environ.get("WN8_EXP_FILE", "wn8exp.json")
 
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "gr0ut-recruit-scout/1.0"})
@@ -69,10 +71,19 @@ def api_get(path, _retries=3, **params):
 # --- WN8 ---------------------------------------------------------------------
 
 def load_wn8_expected():
-    """{tank_id: {expDamage, expDef, expFrag, expSpot, expWinRate}}."""
-    r = SESSION.get(WN8_EXP_URL, timeout=30)
-    r.raise_for_status()
-    return {row["IDNum"]: row for row in r.json()["data"]}
+    """{tank_id: {expDamage, expDef, expFrag, expSpot, expWinRate}}.
+
+    Depuis XVM ; si XVM est indisponible, depuis la copie locale WN8_EXP_FILE.
+    """
+    try:
+        r = SESSION.get(WN8_EXP_URL, timeout=30)
+        r.raise_for_status()
+        rows = r.json()["data"]
+    except (requests.RequestException, ValueError, KeyError) as exc:
+        print(f"  warn: table WN8 XVM indispo ({exc}) ; copie locale {WN8_EXP_FILE}.")
+        with open(WN8_EXP_FILE, encoding="utf-8") as fh:
+            rows = json.load(fh)["data"]
+    return {row["IDNum"]: row for row in rows}
 
 
 def compute_wn8(tank_rows, exp):
