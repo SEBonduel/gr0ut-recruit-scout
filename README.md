@@ -7,7 +7,7 @@ candidat dans Discord. Gratuit via GitHub Actions.
 
 ## Principe
 
-1. `watchlist.json` = liste de **68 clans FR** à surveiller (détectés automatiquement
+1. `watchlist.json` = liste de **82 clans FR** à surveiller (détectés automatiquement
    par analyse de leurs descriptions ; ~5300 joueurs suivis).
 2. Chaque jour : snapshot des rosters (`rosters.json`, committé d'un run à l'autre).
 3. Diff avec la veille → **départs**. Pour chacun, si désormais **sans clan** :
@@ -46,7 +46,7 @@ Dravec, CS-63, Obj. 140, Leopard 1, VK 72.01 (K), E 100.
 - « Français » = **inféré** de la surveillance de clans FR (l'API n'expose pas la
   nationalité). Un joueur FR qui quitte un clan non-FR non surveillé ne sera pas vu.
 - **WN8 global** (à vie), pas « récent 30j » (non fourni par l'API sans suivi long).
-- Ne couvre que les **68 clans** de `watchlist.json` (élargissable).
+- Ne couvre que les **82 clans** de `watchlist.json` (élargissable).
 
 ## Gérer la watchlist
 
